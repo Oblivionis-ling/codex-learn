@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <rect width="960" height="540" fill="#ffffff"/>
+  <text x="480" y="65" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" fill="#0f172a">人工修改时间对比（分钟）</text>
+  <line x1="150" y1="440" x2="850" y2="440" stroke="#64748b" stroke-width="3"/>
+  <rect x="250" y="140" width="180" height="300" fill="#fb7185"/>
+  <rect x="560" y="248" width="180" height="192" fill="#38bdf8"/>
+  <text x="340" y="125" text-anchor="middle" font-family="Arial" font-size="28">25</text>
+  <text x="650" y="233" text-anchor="middle" font-family="Arial" font-size="28">16</text>
+  <text x="340" y="485" text-anchor="middle" font-family="Arial, sans-serif" font-size="24">自由对话</text>
+  <text x="650" y="485" text-anchor="middle" font-family="Arial, sans-serif" font-size="24">项目卡</text>
+</svg>

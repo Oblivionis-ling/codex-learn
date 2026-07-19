@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "workspace_root": "<choose-a-dedicated-runtime-workspace-on-first-use>",
+  "obsidian_vault": "<choose-an-obsidian-vault-on-first-use>",
+  "notes_subdir": "Learn",
+  "attachment_folder": "Attachments",
+  "quality_profile": "maximum",
+  "asr_model": "large-v3",
+  "ocr_profile": "PP-OCRv5",
+  "keep_structured_evidence": true,
+  "keep_transcript": true,
+  "keep_raw_media": false
+}

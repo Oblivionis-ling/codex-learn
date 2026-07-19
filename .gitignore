@@ -1,0 +1,46 @@
+# Per-machine runtime and configuration
+_work/
+cache/
+jobs/
+output/
+sandbox/
+_runtime/
+.local/
+config/settings.json
+
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Downloaded source media and model payloads
+*.aac
+*.avi
+*.flac
+*.m4a
+*.mkv
+*.mov
+*.mp3
+*.mp4
+*.ogg
+*.wav
+*.webm
+*.srt
+*.vtt
+*.part
+
+# Secrets and browser state
+.env
+.env.*
+*.cookie
+cookies*.txt
+*.token
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

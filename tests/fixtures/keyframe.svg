@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <rect width="960" height="540" fill="#111827"/>
+  <rect x="90" y="65" width="780" height="410" rx="20" fill="#f8fafc"/>
+  <text x="130" y="130" font-family="Arial, sans-serif" font-size="30" fill="#0f172a">项目状态</text>
+  <rect x="130" y="180" width="700" height="82" rx="12" fill="#e0e7ff"/>
+  <text x="165" y="232" font-family="Arial, sans-serif" font-size="26" fill="#3730a3">项目 A：已投稿</text>
+  <rect x="130" y="290" width="700" height="82" rx="12" fill="#e0e7ff"/>
+  <text x="165" y="342" font-family="Arial, sans-serif" font-size="26" fill="#3730a3">项目 B：已投稿</text>
+  <text x="130" y="425" font-family="Arial, sans-serif" font-size="22" fill="#b91c1c">画面未显示收益数据</text>
+</svg>

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Learn"
+  short_description: "从图文和视频链接提炼、验证并归档图文知识"
+  default_prompt: "使用 $learn 分析这个链接，提炼并验证知识，生成图文并茂的 Obsidian 笔记："
