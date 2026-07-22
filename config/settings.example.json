@@ -6,7 +6,11 @@
   "attachment_folder": "Attachments",
   "quality_profile": "maximum",
   "asr_model": "large-v3",
-  "ocr_profile": "PP-OCRv5",
+  "asr_device": "auto",
+  "asr_compute_type": "auto",
+  "asr_batch_size": "auto",
+  "ocr_engine": "rapidocr",
+  "ocr_profile": "PP-OCRv6-small",
   "keep_structured_evidence": true,
   "keep_transcript": true,
   "keep_raw_media": false

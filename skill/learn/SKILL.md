@@ -17,19 +17,19 @@ $learn <link-or-local-file>
 
 Do not require the user to restate the workflow. Infer the platform, process all material modalities needed for the claims, run a safe minimal experiment when feasible, write the note, then answer with the conclusion and output path.
 
-## First-use deployment
+## Runtime readiness
 
-Before the first job, run `scripts/bootstrap.py status --json` with the Python selected by the active workspace instructions.
+Run `scripts/bootstrap.py status --json` with the Python selected by the active workspace instructions. Run `provision` only when `provision_current` is false; never reinstall tools before every source.
 
 If no local configuration exists:
 
 1. Ask only for a dedicated runtime workspace and an Obsidian Vault if the user has not already supplied them.
 2. Run `scripts/bootstrap.py configure --workspace <path> --vault <path>`. Optionally supply `--notes-subdir`.
 3. Store paths only in the OS-local config returned by the script. Never write them into this Skill, repository files, prompts, or examples.
-4. Run `scripts/bootstrap.py provision` when local ASR, OCR, video acquisition, or plotting tools are needed. Allow the quality profile and large model download to finish; quality takes priority over first-run latency.
-5. Run `scripts/bootstrap.py doctor --json` and report any capability that remains unavailable.
+4. Run `scripts/bootstrap.py provision` once when local ASR, OCR, video acquisition, or plotting tools are needed. It uses a dependency fingerprint and returns immediately on unchanged reruns.
+5. Run `scripts/bootstrap.py doctor --deep --json` after first installation or a tool failure. Use the fast `doctor --json` for routine checks.
 
-The default quality profile uses a high-accuracy multilingual ASR model, Chinese-capable OCR, FFmpeg support, visual processing, and plotting. Reuse the shared model cache between jobs.
+The default quality profile keeps `large-v3` ASR and uses PP-OCRv6 through RapidOCR/ONNX. Reuse the shared model and dependency cache between jobs.
 
 ## Workspace boundary
 
@@ -42,6 +42,20 @@ The default quality profile uses a high-accuracy multilingual ASR model, Chinese
 
 Initialize each source with `scripts/job.py init --url <url>`. Read `references/platform-routing.md` before platform-specific acquisition or when a route fails.
 
+## Fast execution
+
+Read `references/performance.md` before a video job, a batch of images, or performance troubleshooting.
+
+1. Fetch independent metadata and subtitle endpoints concurrently, but stop once authoritative text is sufficient.
+2. Prefer official subtitles over media download and ASR. Do not OCR article text already present in the DOM.
+3. Read `runtime_python` from `bootstrap.py status`; run heavy scripts with that interpreter.
+4. Pass all pages or media parts for one source to a single process so the model loads once:
+   - `scripts/transcribe.py <media...> --output <transcript.json>`
+   - `scripts/ocr_images.py <images...> --output <ocr.json>`
+   - `scripts/extract_keyframes.py --video <video> --timestamps <seconds...> --output-dir <frames>`
+5. On CPU-only machines, do not run ASR and OCR simultaneously. Parallelize network retrieval, not competing model inference.
+6. Request word timestamps only when exact word-level alignment is material; segment timestamps are the default.
+
 ## Acquire the source
 
 Use the most authoritative available representation, escalating until the material claims are supported:
@@ -49,8 +63,8 @@ Use the most authoritative available representation, escalating until the materi
 1. Platform metadata, public API, purpose-built connector, or CLI.
 2. Official article body, chapters, captions, subtitles, transcript, and downloadable source images.
 3. Focused page content through a browser when rendering or an existing signed-in session is required.
-4. Public media plus local speech-to-text when no usable transcript exists.
-5. Transcript-guided keyframes, scene changes, and OCR for visually material information.
+4. Public media plus one batched local speech-to-text invocation when no usable transcript exists.
+5. One batched extraction pass for transcript-guided keyframes, then one OCR process for only the visually material frames.
 
 Do not bypass login, CAPTCHA, paywalls, geographic restrictions, or access controls. If the source is inaccessible, preserve the precise failure state and do not synthesize from a title or search snippet.
 
@@ -76,7 +90,8 @@ For video:
 1. Anchor candidates to statements about names, numbers, prompts, workflows, demonstrations, comparisons, and conclusions.
 2. Add sparse scene-change coverage for visually important silent sections.
 3. Inspect candidates at original resolution and keep only non-redundant explanatory frames.
-4. Caption each frame with timestamp and what it proves; do not treat a visible UI as independent external verification.
+4. Extract all selected timestamps with `scripts/extract_keyframes.py` instead of launching FFmpeg or Python once per frame.
+5. Caption each frame with timestamp and what it proves; do not treat a visible UI as independent external verification.
 
 ## Synthesize and verify
 

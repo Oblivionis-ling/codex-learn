@@ -15,6 +15,14 @@ $learn https://example.com/content
 - 将原文图片、视频关键帧和实验图复制到 Obsidian 附件目录并嵌入笔记。
 - 自动生成 Mermaid 内容结构图、Obsidian 双链和知识关系图。
 
+## 速度优化
+
+- 部署使用依赖指纹；环境和模型未变化时，重复 `provision` 会直接走快速路径。
+- `large-v3` 自动选择 CUDA/float16 或 CPU/int8，并使用批量推理。
+- 多段媒体、多个图片和多个关键帧分别在单一进程中批量处理，避免重复加载模型。
+- OCR 使用 RapidOCR + PP-OCRv6/ONNX；低置信度结果强制回看原图，不用速度交换事实准确性。
+- 获取顺序为“元数据/正文/官方字幕 → 必要媒体 → 关键帧/OCR”，减少不必要的下载和计算。
+
 ## 安装
 
 将仓库克隆到任意位置，然后让 Codex 的个人 Skill 目录指向 `skill/learn`。
@@ -61,6 +69,12 @@ $learn <链接或本地文件>
 ```text
 <python> skill/learn/scripts/bootstrap.py provision
 <python> skill/learn/scripts/bootstrap.py doctor --json
+```
+
+如果默认 Python 包下载节点较慢，可在首次部署时传入本地区域可用的镜像：
+
+```text
+<python> skill/learn/scripts/bootstrap.py provision --pip-index <index-url>
 ```
 
 隔离环境和模型保存在运行工作区的共享 `cache/` 中。首次下载可能较久，后续任务复用缓存。

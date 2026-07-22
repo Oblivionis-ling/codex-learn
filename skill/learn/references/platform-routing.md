@@ -4,11 +4,13 @@
 
 Start with the most authoritative structured representation. Use browser interaction when a page is dynamic, rendering is itself evidence, or the content is visible only in the user's existing signed-in session. Escalate to media download, local ASR, keyframes, and OCR only as needed, but prefer completeness and accuracy over first-run speed.
 
+Fetch independent metadata and subtitle endpoints concurrently. Do not download media until subtitle and article-text routes are exhausted. Reuse one authenticated browser tab and one local model process per source instead of reopening them for each artifact.
+
 ## Bilibili
 
 1. Read the public video metadata: title, pages, duration, author, description, `bvid`, and `cid`.
 2. Query official and automatic subtitles for every relevant page. Preserve subtitle timestamps.
-3. If no usable subtitle exists, retrieve the public playable media with an appropriate CLI and transcribe the audio locally with the configured high-quality ASR model.
+3. If no usable subtitle exists, retrieve the smallest public media stream that preserves the needed modality. Use concurrent fragment download when supported, then transcribe all pages in one `transcribe.py` call.
 4. Use transcript anchors and scene changes to select frames showing prompts, project names, procedures, outputs, metrics, comparisons, and conclusions.
 5. OCR only frames whose visible text materially affects a claim. Cross-check names, numbers, and code against the original-resolution frame.
 6. Keep a frame's timestamp and a timestamped source link in the evidence bundle.
@@ -19,7 +21,7 @@ Start with the most authoritative structured representation. Use browser interac
 1. Extract the title, account, publication time, abstract, and focused article body.
 2. Preserve headings, paragraphs, quotes, lists, code, links, captions, and the position of meaningful inline images.
 3. Download article images from their rendered or lazy-load source URLs in reading order. Exclude avatars, QR-code promotions, reaction UI, ads, and related articles unless requested.
-4. OCR screenshots, diagrams, tables, and charts only when they add information absent from the article text.
+4. Collect screenshots, diagrams, tables, and charts first, then OCR the selected set in one `ocr_images.py` call only when they add information absent from the article text.
 5. Connect each retained image to its surrounding paragraph or heading through `locator` or `artifact_ref`.
 6. Treat blocked, expired, deleted, or account-restricted pages as inaccessible instead of reconstructing them from snippets.
 
@@ -29,7 +31,7 @@ Start with the most authoritative structured representation. Use browser interac
 2. Prefer visible post text, image order, captions, and platform-provided subtitles.
 3. Use the user's existing browser session when sign-in is required. Never export cookies, tokens, messages, or account data.
 4. Preserve every information-bearing post image in order; omit unrelated recommendation cards and comments unless requested.
-5. For video posts, follow the same transcript-guided keyframe process as Bilibili.
+5. For video posts, follow the same subtitle-first and batched keyframe process as Bilibili.
 6. If login or CAPTCHA blocks access, ask the user to open/sign in or attach the media. Do not attempt to bypass it.
 
 ## Generic web pages
@@ -50,8 +52,8 @@ Start with the most authoritative structured representation. Use browser interac
 ## Quality fallbacks
 
 - Prefer an official transcript over ASR, and ASR over manual inference from sparse frames.
-- Use the configured maximum-quality multilingual ASR model unless hardware makes it impossible; record any fallback model and compute mode.
-- Use Chinese-capable OCR and retain confidence or uncertainty for material text.
+- Use the configured maximum-quality multilingual ASR model with automatic CUDA/CPU compute selection; record the backend and compute mode.
+- Use RapidOCR/PP-OCRv6 for selected images. Visually review missing text and every line below the configured confidence threshold.
 - When many frame candidates exist, generate a contact sheet for selection, then keep only a few original-resolution evidence frames.
 - If a visual cannot be archived, record the missing file or inaccessible URL explicitly.
 
