@@ -183,8 +183,8 @@ def optimized_config(existing: dict[str, Any]) -> dict[str, Any]:
             "asr_batch_size": data.get("asr_batch_size", "auto"),
             "ocr_engine": "rapidocr",
             "ocr_profile": "PP-OCRv6-small",
-            "keep_structured_evidence": True,
-            "keep_transcript": True,
+            "keep_structured_evidence": False,
+            "keep_transcript": False,
             "keep_raw_media": False,
         }
     )

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" viewBox="0 0 600 800">
+  <rect width="600" height="800" fill="#f8f6f0"/>
+  <circle cx="300" cy="105" r="58" fill="#e8c6a5"/>
+  <path d="M205 185 L395 185 L455 330 L382 350 L355 265 L355 455 L245 455 L245 265 L218 350 L145 330 Z" fill="#ffffff" stroke="#d7d7d7" stroke-width="3"/>
+  <path d="M235 455 L365 455 L390 595 L315 595 L300 515 L285 595 L210 595 Z" fill="#c6a56c"/>
+  <rect x="225" y="590" width="62" height="118" fill="#273244"/>
+  <rect x="313" y="590" width="62" height="118" fill="#273244"/>
+  <rect x="195" y="700" width="105" height="35" rx="12" fill="#222222"/>
+  <rect x="300" y="700" width="105" height="35" rx="12" fill="#222222"/>
+  <text x="300" y="775" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#4b3b24">白色短袖＋卡其短裤</text>
+</svg>

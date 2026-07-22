@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" viewBox="0 0 600 800">
+  <rect width="600" height="800" fill="#f4f7fb"/>
+  <circle cx="300" cy="105" r="58" fill="#e8c6a5"/>
+  <path d="M205 185 L395 185 L455 330 L382 350 L355 265 L355 455 L245 455 L245 265 L218 350 L145 330 Z" fill="#9fd3ed"/>
+  <path d="M245 455 L298 455 L282 710 L205 710 Z M302 455 L355 455 L395 710 L318 710 Z" fill="#eee7d8"/>
+  <rect x="185" y="705" width="112" height="35" rx="16" fill="#ffffff" stroke="#b9c1cc" stroke-width="4"/>
+  <rect x="303" y="705" width="112" height="35" rx="16" fill="#ffffff" stroke="#b9c1cc" stroke-width="4"/>
+  <text x="300" y="775" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#334155">浅蓝短袖＋米白直筒裤</text>
+</svg>
