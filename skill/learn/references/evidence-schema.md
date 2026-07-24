@@ -1,30 +1,32 @@
-# Evidence schema
+# Compact render bundle schema
 
-Use UTF-8 JSON with `schema_version: 1`. Keep the bundle in the job directory; it may contain runtime-local media paths and therefore should not be committed.
+Use UTF-8 JSON with `schema_version: 1`. Keep it only until the final note and selected visuals pass verification, then delete it unless the user explicitly asks to retain working evidence.
 
-## Top-level fields
+## Top-level shape
 
 ```json
 {
   "schema_version": 1,
   "job_id": "platform-source-id",
   "status": "analyzed",
+  "content_profile": "technical|overview|catalog|visual",
   "tags": [],
   "source": {},
-  "artifacts": [],
   "summary": {},
-  "summary_diagram": {},
-  "claims": [],
+  "source_item_count": 0,
+  "content_items": [],
   "experiment": {},
   "original_images": [],
   "keyframes": [],
   "experiment_figures": [],
-  "attachments": [],
   "concepts": [],
   "edges": [],
-  "limitations": []
+  "artifacts": [],
+  "claims": []
 }
 ```
+
+`artifacts` and `claims` are optional transient acquisition aids. The renderer never writes them into the note. Do not populate them when a compact summary can be grounded directly from the acquired source.
 
 ## Source
 
@@ -38,126 +40,99 @@ Required:
 }
 ```
 
-Optional source fields include `author`, `published_at`, `duration_seconds`, `description`, `retrieved_at`, and `acquisition_state`.
+Optional fields: `author`, `published_at`, `retrieved_at`, `duration_seconds`, and `acquisition_state`.
 
-## Artifacts
+## Summary
 
-Every artifact has a unique ID and a precise locator:
+Common fields:
 
 ```json
 {
-  "id": "transcript-0042",
-  "modality": "metadata|article|transcript|image|keyframe|ocr|external|experiment",
-  "locator": "00:49-01:02",
-  "text": "Raw extracted text",
-  "description": "Visible or structural observation",
-  "local_path": null,
-  "confidence": 0.91,
-  "include_in_note": true
+  "one_sentence": "Concise conclusion",
+  "overview": "Compact whole-source synthesis",
+  "key_points": ["Only useful takeaways"],
+  "procedure": ["Executable technical step"],
+  "visual_ids": ["optional-selected-visual"]
 }
 ```
 
-Use `text` for extracted language and `description` for visual or structural observations. Do not overwrite raw ASR/OCR when correcting it; create a correction artifact that references the original. `include_in_note` forces a key excerpt into the rendered note.
+- `overview` is required for every profile.
+- `procedure` is required and non-empty only for `technical`.
+- `key_points` is mainly for `overview`; omit it when it repeats the overview.
+- `visual_ids` is optional and must reference selected items from the visual collections.
 
-## Summary and content structure
+An optional `summary_diagram` may contain Mermaid code. Supply it only when the diagram improves technical or conceptual understanding; the renderer does not auto-generate one.
+
+## Content items
+
+`source_item_count` and `content_items` are required for `catalog` and `visual`, and omitted otherwise. The item count must match the number of variants or list entries identified in the source.
+
+Each item uses:
 
 ```json
 {
-  "summary": {
-    "one_sentence": "One grounded conclusion",
-    "key_points": ["Reusable point"],
-    "timeline": [
-      {
-        "seconds": 49,
-        "label": "Business model explanation",
-        "evidence_refs": ["transcript-0042"]
-      }
-    ]
-  },
-  "summary_diagram": {
-    "type": "mermaid",
-    "code": "flowchart TD\n  A[Source] --> B[Idea]"
-  }
+  "name": "Recognizable item name",
+  "what": "What it is, contains, or looks like",
+  "why": "Why it is useful, recommended, or visually effective",
+  "notes": "Optional concrete selection or usage note",
+  "visual_id": "required-for-visual; optional-for-catalog"
 }
 ```
 
-`summary_diagram` is optional. When absent, the renderer creates a Mermaid structure diagram from `summary.key_points` or the timeline.
+- Preserve source order.
+- `catalog` requires `name`, `what`, and `why` for every item.
+- `visual` requires `name`, `what`, and a unique valid `visual_id`; `why` is optional.
+- Do not shorten a source's numbered list by silently dropping items.
 
-## Claims
+## Technical experiment
+
+Use only when `content_profile` is `technical`:
 
 ```json
 {
-  "id": "claim-001",
-  "statement": "A precise claim",
-  "kind": "source_fact|interpretation|external_fact|recommendation",
-  "evidence_refs": ["frame-0212", "transcript-0148"],
-  "evidence_level": "A|B|C|D",
-  "verification": "verified|partially_verified|unverified|contradicted",
-  "missing_evidence": ""
+  "status": "completed|inconclusive|failed|not_run",
+  "input": "Concrete test input",
+  "success_condition": "Observable pass condition",
+  "method": ["Executed step"],
+  "result": "Observed result",
+  "elapsed_seconds": 12.3,
+  "errors": [],
+  "conclusion": "What the result establishes"
 }
 ```
 
-Evidence levels:
+Use `not_run` only when local execution is unsafe or impossible; include the authoritative check performed and the concrete reason in `result` and `conclusion`. Do not add `experiment` for other profiles.
 
-- `A`: current primary or official evidence, or a directly reproducible result.
-- `B`: clearly shown or stated in the source with cross-modal support.
-- `C`: a single-source assertion, subjective experience, or plausible inference.
-- `D`: missing result, unsupported prediction, or claim contradicted by available evidence.
+## Visual collections
 
-Every A/B claim needs at least one valid `evidence_ref`. Profitability, audience response, platform policy, price, and eligibility claims need outcome data or current authoritative documentation.
-
-## Minimal experiment
+`original_images`, `keyframes`, and `experiment_figures` use this base shape:
 
 ```json
 {
-  "status": "planned|running|completed|inconclusive|failed|not_run",
-  "hypothesis": "Smallest risky assumption",
-  "example": "Controlled example",
-  "steps": ["Step 1"],
-  "metrics": ["elapsed_minutes", "edit_minutes", "error_count"],
-  "success_criteria": ["Measurable threshold"],
-  "stop_criteria": ["Safety or cost boundary"],
-  "result": "Grounded result summary",
-  "observations": ["Raw observation"]
-}
-```
-
-Use `completed` only after execution. A plan is not a result.
-
-## Visuals and attachments
-
-The four visual collections use the same base item:
-
-```json
-{
-  "id": "frame-0049",
-  "artifact_ref": "frame-artifact-0049",
+  "id": "visual-001",
   "local_path": "relative/or/absolute/file.png",
   "source_url": "https://example.invalid/optional-original.png",
-  "caption": "What this image shows and why it matters",
-  "locator": "Section 2, after paragraph 3",
+  "caption": "Short reader-facing caption",
   "timestamp_seconds": 49
 }
 ```
 
-- `original_images`: information-bearing source images in reading order.
-- `keyframes`: selected video frames; include `timestamp_seconds`.
-- `experiment_figures`: charts, screenshots, contact sheets, comparisons, or result diagrams created by the sandbox experiment.
-- `attachments`: useful supporting files that are not part of the three visual groups.
+- Provide `local_path` for a visual that must be archived locally; `source_url` is a fallback.
+- Keep timestamp and locator internally when useful for acquisition, but the note caption does not display them.
+- `experiment_figures` are valid only for `technical`.
+- A visual is copied only when referenced by `summary.visual_ids`, `content_items[].visual_id`, or the technical experiment figure collection.
 
-Provide `local_path` whenever the image should be archived into Obsidian. `source_url` is a fallback embed and provenance link, not proof that the image was preserved locally. Each item requires a unique `id`, and should have a caption. Use `artifact_ref` to connect the visual to a normalized evidence artifact.
-
-## Concepts and graph edges
+## Optional knowledge links
 
 ```json
 {
-  "concepts": [
-    {"name": "AI Agent", "aliases": ["智能体", "Agent"]}
-  ],
-  "edges": [
-    {"from": "AI Agent", "relation": "管理", "to": "长文本项目"}
-  ]
+  "concepts": [{"name": "AI Agent", "aliases": ["智能体"]}],
+  "edges": [{"from": "AI Agent", "relation": "管理", "to": "长文本项目"}]
 }
 ```
 
-Normalize aliases before creating a new Obsidian concept node. Render the relationship graph when there are at least three meaningful edges.
+Use only meaningful reusable concepts. Render a relationship graph only when at least three non-trivial edges exist.
+
+## Transient evidence rules
+
+When extraction needs raw ASR/OCR or claim checks, `artifacts` may carry IDs, modalities, locators, text, and confidence, and `claims` may reference those IDs. Validate references before synthesis. Never set them as note sections, never copy them as attachments, and delete the bundle and transcripts after final verification by default.

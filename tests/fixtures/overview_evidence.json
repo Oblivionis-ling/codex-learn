@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "job_id": "web-summer-moisture",
+  "status": "analyzed",
+  "content_profile": "overview",
+  "tags": ["生活百科", "防潮"],
+  "source": {
+    "url": "https://example.invalid/summer-moisture",
+    "platform": "web",
+    "title": "夏季居家防潮要点",
+    "author": "示例作者",
+    "retrieved_at": "2026-07-23",
+    "acquisition_state": "text_only"
+  },
+  "summary": {
+    "one_sentence": "夏季防潮的核心是减少湿气进入、保持空气流动并及时处理局部积水。",
+    "overview": "文章说明，高湿天气不宜长时间开窗，应该根据室外湿度选择短时通风，并优先处理卫生间、衣柜和墙角等容易积湿的位置。除湿机或空调除湿可以降低整体湿度，吸湿盒更适合小型封闭空间；发现霉点后应先排查渗水和冷凝来源，而不是只擦掉表面。",
+    "key_points": [
+      "室外湿度很高时，长时间开窗可能把更多湿气带入室内。",
+      "大空间用主动除湿，小型封闭空间再搭配吸湿用品。",
+      "反复发霉要先找渗水、冷凝或通风死角。"
+    ]
+  },
+  "content_items": [],
+  "original_images": [],
+  "keyframes": [],
+  "experiment_figures": [],
+  "concepts": [],
+  "edges": []
+}

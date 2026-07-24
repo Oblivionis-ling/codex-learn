@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "job_id": "xiaohongshu-summer-outfits",
+  "status": "analyzed",
+  "content_profile": "visual",
+  "tags": ["男生穿搭", "夏季", "短袖"],
+  "source": {
+    "url": "https://example.invalid/summer-outfits",
+    "platform": "xiaohongshu",
+    "title": "男生一周穿搭：夏天清爽短袖搭配",
+    "author": "示例作者",
+    "retrieved_at": "2026-07-23",
+    "acquisition_state": "complete_multimodal"
+  },
+  "summary": {
+    "one_sentence": "两套示例都以低饱和短袖和宽松下装营造清爽感。",
+    "overview": "这组夏季穿搭强调低饱和颜色、宽松但不过度拖沓的轮廓，以及鞋袜与上衣颜色的呼应。第一套偏日常通勤，第二套更适合周末和户外休闲。"
+  },
+  "source_item_count": 2,
+  "content_items": [
+    {
+      "name": "浅蓝短袖＋米白直筒裤",
+      "what": "浅蓝色宽松短袖搭配米白直筒裤和白色运动鞋。",
+      "why": "冷浅色上衣与浅色下装降低视觉重量，适合炎热天气和日常通勤。",
+      "visual_id": "outfit-blue"
+    },
+    {
+      "name": "白色短袖＋卡其短裤",
+      "what": "白色基础短袖搭配膝上卡其短裤、深色凉鞋和中筒袜。",
+      "why": "上装干净、下装增加暖色层次，整体更休闲并方便活动。",
+      "visual_id": "outfit-khaki"
+    }
+  ],
+  "original_images": [
+    {"id": "outfit-blue", "local_path": "outfit-blue.svg", "caption": "浅蓝短袖与米白直筒裤搭配"},
+    {"id": "outfit-khaki", "local_path": "outfit-khaki.svg", "caption": "白色短袖与卡其短裤搭配"}
+  ],
+  "keyframes": [],
+  "experiment_figures": [],
+  "concepts": [],
+  "edges": []
+}

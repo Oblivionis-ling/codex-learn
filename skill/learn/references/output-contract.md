@@ -1,54 +1,91 @@
 # Output contract
 
-Return two layers: a concise conversational result and a detailed Obsidian note.
+Return a concise conversational result and one compact Obsidian note.
 
 ## Conversational result
 
-Lead with the result. Include:
+Lead with:
 
-1. acquisition completeness (`complete_multimodal`, partial, text-only, and so on);
-2. the one-sentence conclusion;
-3. the most useful article sections or timestamps;
-4. reusable knowledge separated from unverified source claims;
-5. the minimal experiment outcome, or an explicit `planned` status;
-6. the note path, archived visual count, missing material, and cleanup status.
+1. inferred `content_profile` and acquisition completeness;
+2. the useful conclusion;
+3. technical validation result when the profile is `technical`;
+4. note path, retained visual count, and cleanup status.
 
-The conversation must remain understandable without opening the note.
+Do not repeat the full note, evidence audit, missing-claim inventory, or transcript details in chat.
 
-## Obsidian note
+## Common note shell
 
-Use `assets/obsidian-note-template.md`. Include:
+Use `assets/obsidian-note-template.md` with:
 
-- YAML frontmatter with source, platform, author, publication date, retrieval date, status, and tags;
-- one-sentence conclusion and a Mermaid content-structure diagram;
-- article outline or timestamped video timeline;
-- selected original text excerpts with evidence IDs and locators;
-- original source images in reading order and timestamped video keyframes;
-- reusable knowledge;
-- a claim table with type, evidence level, verification state, evidence IDs, and missing evidence;
-- the minimal experiment design, execution status, result, and embedded experiment figures;
-- limitations and missing material;
-- normalized `[[wikilinks]]` and a compact relationship graph when at least three relations exist;
-- the original source URL and supporting attachments.
-
-When a Vault is configured, copy local visuals into its configured attachment folder under a job-specific `Learn` subfolder, then use Obsidian embeds. Do not embed a nonexistent local file. External image URLs may be used as a clearly non-local fallback.
+- compact YAML frontmatter: title, source, platform, author, publication/retrieval dates, profile, and tags;
+- a profile-specific body;
+- optional compact `[[wikilinks]]` or a relationship graph only when useful;
+- the original source URL.
 
 Use this filename pattern:
 
 ```text
-<sanitized-title>_来源笔记_YYYYMMDD.md
+<sanitized-title>_学习笔记_YYYYMMDD.md
 ```
 
 Do not label generated files `最终版`.
 
+## Profile bodies
+
+### `technical`
+
+- `## 技术是什么`: `summary.overview`.
+- `## 怎么操作`: ordered `summary.procedure`.
+- optional explicitly supplied structure diagram when it clarifies a multi-step system.
+- optional selected source diagrams/screenshots from `summary.visual_ids`.
+- `## 可行性验证`: actual experiment status, input, success condition, result, elapsed time, errors, and conclusion.
+- experiment figures only when they clarify the result.
+
+### `overview`
+
+- `## 全文总结`: `summary.overview`.
+- `## 要点`: concise `summary.key_points` when non-empty.
+- optional selected visual from `summary.visual_ids` only when irreplaceable.
+
+### `catalog`
+
+- `## 简短总览`: `summary.overview`.
+- `## 完整清单`: every `content_item` in source order.
+- each item uses a level-three heading and explains `是什么` and `为什么`; add `补充` only when `notes` is useful.
+- embed an item's image only when it has `visual_id`.
+
+### `visual`
+
+- `## 简单总结`: `summary.overview`.
+- `## 逐项展示`: every `content_item` in source order.
+- each item uses a level-three heading, embeds its unique `visual_id`, and gives a short description; add `搭配逻辑/效果` only when `why` is present.
+
+## Sections that must not render
+
+Never render these as note sections:
+
+- original text excerpts;
+- source evidence blocks or evidence IDs;
+- claim/evidence tables or verification levels;
+- limitations or missing-evidence lists;
+- timestamped transcript/timeline;
+- planned experiments for non-technical content;
+- generic attachment appendices;
+- raw ASR, OCR, or acquisition logs.
+
+## Attachment policy
+
+- Copy only visual IDs referenced by `summary.visual_ids`, `content_items[].visual_id`, or technical experiment figures.
+- Do not display timestamps, locators, evidence IDs, or machine-local paths in captions.
+- Do not copy transcript files, audio, video, JSON, contact sheets, or unused candidate frames.
+- When a Vault is configured, copy selected visuals into its configured attachment folder under a job-specific `Learn` subfolder and use Obsidian embeds.
+- Never embed a nonexistent local file. An external image URL is an explicit fallback, not proof of local archival.
+- After rendering, run `job.py finalize` so attachment verification happens before per-job transcripts, evidence, candidate frames, and sandbox files are removed.
+
 ## Quality gates
 
-- Do not summarize inaccessible body content from a title or search snippets alone.
-- Do not merge narration, OCR, visible UI state, and external verification into one unattributed claim.
-- Do not present process completion as business success.
-- Do not present a future test or promised follow-up as a completed result.
-- Do not mark current policies or prices verified without a current official source.
-- Ensure every A/B claim points to evidence.
-- Mention material ASR/OCR uncertainty and model fallback.
-- Verify every copied attachment exists and every Markdown placeholder is resolved.
-- Confirm the note has balanced Mermaid code fences and no machine-local path in its prose or frontmatter unless the user explicitly wants one.
+- Do not summarize inaccessible body content from a title or snippet.
+- `catalog`: `source_item_count`, `content_items`, and rendered item counts must all match.
+- `visual`: `source_item_count`, `content_items`, and rendered item counts must all match; every item must render exactly one unique image. Use one combined comparison image for a before/after pair.
+- `technical`: do not claim feasibility without an actual result or a concrete authoritative check explaining why local execution was impossible.
+- Verify every copied visual exists, every placeholder is resolved, optional Mermaid fences are balanced, and no machine-local path appears in note prose or frontmatter.

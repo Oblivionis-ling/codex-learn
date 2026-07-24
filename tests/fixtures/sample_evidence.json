@@ -1,148 +1,75 @@
 {
   "schema_version": 1,
   "job_id": "bilibili-BV1C6M46uEe3",
-  "status": "needs_outcome_verification",
-  "tags": ["AI 写作", "AI Agent", "内容验证"],
+  "status": "analyzed",
+  "content_profile": "technical",
+  "tags": ["AI 写作", "AI Agent", "流程验证"],
   "source": {
     "url": "https://www.bilibili.com/video/BV1C6M46uEe3/",
     "platform": "bilibili",
-    "title": "AI 写网文能赚钱吗？一次流程验证",
+    "title": "AI 网文项目卡工作流",
     "author": "示例作者",
     "published_at": "2026-07-09",
-    "retrieved_at": "2026-07-20",
+    "retrieved_at": "2026-07-23",
     "duration_seconds": 356,
     "acquisition_state": "complete_multimodal"
   },
-  "artifacts": [
-    {
-      "id": "transcript-0001",
-      "modality": "transcript",
-      "locator": "05:09-05:27",
-      "text": "AI 可以降低内容生产成本，但作品是否产生收益还需要真实发布数据验证。",
-      "confidence": 0.96,
-      "include_in_note": true
-    },
-    {
-      "id": "image-0001",
-      "modality": "image",
-      "locator": "流程说明图",
-      "description": "来源中的项目流程结构图。",
-      "local_path": "source-diagram.svg",
-      "confidence": 1.0
-    },
-    {
-      "id": "frame-0299",
-      "modality": "keyframe",
-      "locator": "04:59",
-      "description": "画面展示两个项目已经进入投稿步骤，但没有收入数据。",
-      "local_path": "keyframe.svg",
-      "confidence": 0.92
-    },
-    {
-      "id": "experiment-figure-0001",
-      "modality": "experiment",
-      "locator": "本地沙盒对比实验",
-      "description": "两个方案的人工修改时间对比。",
-      "local_path": "experiment-result.svg",
-      "confidence": 1.0
-    }
-  ],
   "summary": {
-    "one_sentence": "该来源跑通了 AI 网文生产与投稿流程，但没有收益数据，因此只能验证流程可行，不能验证能赚钱。",
-    "key_points": [
-      "AI 降低生产成本，不直接创造收入。",
-      "长文本项目需要项目卡、大纲和状态记录。",
-      "平台反馈与人工编辑仍然是闭环的一部分。"
+    "one_sentence": "项目卡工作流能减少 AI 网文首章的设定冲突和人工修改时间。",
+    "overview": "这是一种先固定人物、世界观、章节目标和状态，再让模型逐章生成的长文本工作流。它适合需要保持连续设定的小说或系列内容，核心价值是减少模型在长上下文中的遗忘和自相矛盾。",
+    "procedure": [
+      "建立项目卡，记录题材、人物关系、世界规则和不可违反的约束。",
+      "先写前三章大纲，再为当前章节定义目标、冲突和结尾状态。",
+      "让模型只生成当前章节，并把新增设定回写到项目状态。",
+      "人工检查人物动机和逻辑冲突，修正后再进入下一章。"
     ],
-    "timeline": [
-      {
-        "seconds": 49,
-        "label": "说明平台分发与收益逻辑",
-        "evidence_refs": ["transcript-0001"]
-      },
-      {
-        "seconds": 299,
-        "label": "展示投稿流程，但未展示收益后台",
-        "evidence_refs": ["frame-0299"]
-      }
-    ]
+    "visual_ids": ["workflow-diagram"]
   },
-  "claims": [
-    {
-      "id": "claim-001",
-      "statement": "作者完成了两个 AI 网文项目并进入投稿步骤。",
-      "kind": "source_fact",
-      "evidence_refs": ["frame-0299"],
-      "evidence_level": "B",
-      "verification": "partially_verified",
-      "missing_evidence": "缺少可独立访问的作品页与后台状态。"
-    },
-    {
-      "id": "claim-002",
-      "statement": "AI 网文可以稳定赚钱。",
-      "kind": "interpretation",
-      "evidence_refs": [],
-      "evidence_level": "D",
-      "verification": "unverified",
-      "missing_evidence": "缺少审核、曝光、阅读和收入数据。"
-    }
-  ],
   "experiment": {
     "status": "completed",
-    "hypothesis": "项目卡加前三章大纲能降低 AI 首章的人工修改成本。",
-    "example": "固定题材和字数，对比自由对话与项目卡流程。",
-    "steps": [
-      "固定模型、题材和目标字数。",
-      "分别生成两个版本。",
-      "盲评一致性和可读性，并记录修改时间。"
+    "input": "固定题材、模型和目标字数，分别用自由对话与项目卡流程生成首章。",
+    "success_condition": "项目卡版本的人工修改时间至少减少 20%，且核心设定冲突不增加。",
+    "method": [
+      "为同一题材准备自由对话提示词和项目卡。",
+      "分别生成两个同字数版本。",
+      "盲评逻辑冲突并记录人工修改时间。"
     ],
-    "metrics": ["edit_minutes", "logic_error_count", "blind_score"],
-    "success_criteria": ["项目卡版本修改时间减少至少 20%。"],
-    "stop_criteria": ["任一版本出现不可修复的核心设定矛盾。"],
-    "result": "示例实验中修改时间从 25 分钟降至 16 分钟，达到预设阈值；这只验证编辑效率，不验证收益。",
-    "observations": ["项目卡版本的人物设定冲突更少。"]
+    "result": "自由对话版本修改 25 分钟，项目卡版本修改 16 分钟；项目卡版本的人物设定冲突更少。",
+    "elapsed_seconds": 2460,
+    "errors": [],
+    "conclusion": "在这个受控示例中，项目卡工作流可运行，并把人工修改时间降低 36%；这只验证编辑效率，不代表作品一定获得流量或收入。"
   },
   "original_images": [
     {
-      "id": "original-image-0001",
-      "artifact_ref": "image-0001",
+      "id": "workflow-diagram",
       "local_path": "source-diagram.svg",
-      "caption": "来源中的项目流程结构图",
-      "locator": "流程说明段之后"
+      "caption": "项目卡到生成、编辑和投稿的操作流程"
     }
   ],
   "keyframes": [
     {
-      "id": "keyframe-0299",
-      "artifact_ref": "frame-0299",
+      "id": "unused-candidate-frame",
       "local_path": "keyframe.svg",
-      "caption": "投稿步骤画面；未出现收益数据",
-      "locator": "视频 04:59",
+      "caption": "仅用于采集核对、不应进入最终笔记",
       "timestamp_seconds": 299
     }
   ],
   "experiment_figures": [
     {
-      "id": "experiment-figure-0001",
-      "artifact_ref": "experiment-figure-0001",
+      "id": "edit-time-chart",
       "local_path": "experiment-result.svg",
-      "caption": "两种流程的人工修改时间对比",
-      "locator": "本地沙盒实验"
+      "caption": "自由对话与项目卡流程的人工修改时间对比"
     }
   ],
-  "attachments": [],
+  "content_items": [],
   "concepts": [
     {"name": "AI Agent", "aliases": ["智能体", "Agent"]},
-    {"name": "AI 网文", "aliases": []},
-    {"name": "平台分发", "aliases": []}
+    {"name": "项目卡", "aliases": []},
+    {"name": "长文本生成", "aliases": []}
   ],
   "edges": [
-    {"from": "AI Agent", "relation": "管理", "to": "长文本项目"},
-    {"from": "AI 网文", "relation": "依赖", "to": "人工编辑"},
-    {"from": "AI 网文收入", "relation": "依赖", "to": "平台分发"}
-  ],
-  "limitations": [
-    "部分转写需要通过画面核对。",
-    "来源没有展示收益结果。"
+    {"from": "项目卡", "relation": "约束", "to": "长文本生成"},
+    {"from": "AI Agent", "relation": "维护", "to": "项目卡"},
+    {"from": "长文本生成", "relation": "需要", "to": "人工编辑"}
   ]
 }
