@@ -1,33 +1,41 @@
 # Content profiles
 
-Choose one profile from the source's dominant reader need. Do not combine full templates.
+Choose one profile from the source's dominant reader need. Do not combine full templates. After selecting `technical`, choose one presentation in `report-templates.md`.
 
 ## `technical`
 
-Use for tools, code, AI techniques, configurations, workflows, and reproducible methods.
+Use for tools, code, AI techniques, configurations, workflows, and reproducible methods. Choose a presentation form: tool/Skill introduction, reproducible tutorial/workflow, or comparison/research/feasibility assessment.
 
-Required note sections:
+For `introduction` and `workflow`, use this note shape:
 
-1. `技术是什么`: plain-language purpose, suitable use, and prerequisites.
-2. `怎么操作`: complete, executable ordered steps. Include commands or settings only when needed.
-3. `可行性验证`: actual test input, success condition, result, cost/time, and conclusion.
+1. `技术是什么`: name the subject, say what it does or solves, and include one useful verified fact.
+2. Optional `怎么操作`: only the actions the reader needs to reproduce or try it.
+3. Concise `可行性验证`: a real result and its scope, usually one or two sentences.
 
-Run the smallest safe experiment that can disprove the key feasibility claim. Keep only diagrams, step screenshots, and experiment figures that help the reader reproduce or judge the result.
+For comparison, research, or feasibility work, choose the `evaluation` presentation instead: lead with the decision, include only decision-changing reasons, and report validation in one or two sentences.
+
+Run the smallest safe experiment that can disprove the key feasibility claim. If local execution is unsafe or impossible, make the smallest authoritative check and state why local testing was not done. Do not render test procedures, raw logs, or routine corrections. Keep a diagram or screenshot only when it helps the reader understand or act.
 
 ## `overview`
 
 Use for general knowledge, life advice, explanations, commentary, stories, or non-itemized educational content.
 
-Required note sections:
+Required note section:
 
 1. `全文总结`: a compact but complete synthesis in one to three short paragraphs.
-2. `要点`: only the few ideas worth remembering or applying.
+
+Optional additions:
+
+- `要点`: only ideas worth remembering or applying that the summary does not repeat.
+- A compact structure diagram when it clarifies relationships or flow.
 
 Do not create an experiment, timeline, evidence table, excerpt section, limitations section, or attachment appendix. Default to no image; retain one only when it carries irreplaceable information.
 
 ## `catalog`
 
-Use when the value lies in a complete list: products, household accessories, tips, recipes, destinations, tools, resources, or recommendations.
+Use when the source presents independently useful items and readers benefit from comparing, selecting, or looking them up: products, household accessories, tips, recipes, destinations, tools, resources, recommendations, and Q&A collections. A numbered group of examples that supports one general point belongs to `overview` when readers do not need every item separately.
+
+For recommendations, explain what each item is and why it helps. For AMA, interview, or FAQ collections, keep each useful question with its answer; set `summary.catalog_format` to `qa` and group by topic only when it helps navigation.
 
 Required note sections:
 

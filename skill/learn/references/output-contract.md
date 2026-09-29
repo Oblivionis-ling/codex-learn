@@ -34,24 +34,26 @@ Do not label generated files `最终版`.
 
 ### `technical`
 
-- `## 技术是什么`: `summary.overview`.
-- `## 怎么操作`: ordered `summary.procedure`.
-- optional explicitly supplied structure diagram when it clarifies a multi-step system.
-- optional selected source diagrams/screenshots from `summary.visual_ids`.
-- `## 可行性验证`: actual experiment status, input, success condition, result, elapsed time, errors, and conclusion.
-- experiment figures only when they clarify the result.
+- `summary.presentation` selects `introduction`, `workflow`, or `evaluation`; default to `introduction` when omitted.
+- `introduction`: `技术是什么` → optional `怎么操作` → concise `可行性验证`.
+- `workflow`: `技术是什么` → necessary ordered `怎么操作` steps → concise `可行性验证`.
+- `evaluation`: `结论` → optional `适用判断` bullets → concise `可行性验证`.
+- For all three forms, state what the tool/method is and what it does or solves. Keep actual result and conclusion in one or two sentences; keep test inputs, success conditions, methods, elapsed time, and routine errors in transient evidence.
+- Optional structure diagram or selected source image only when it adds useful information; do not create an `操作示意` section by default. Experiment figures only when they communicate a result better than text.
 
 ### `overview`
 
 - `## 全文总结`: `summary.overview`.
 - `## 要点`: concise `summary.key_points` when non-empty.
+- optional `## 内容结构图` when a supplied `summary_diagram` clarifies relationships or flow.
 - optional selected visual from `summary.visual_ids` only when irreplaceable.
 
 ### `catalog`
 
 - `## 简短总览`: `summary.overview`.
 - `## 完整清单`: every `content_item` in source order.
-- each item uses a level-three heading and explains `是什么` and `为什么`; add `补充` only when `notes` is useful.
+- Recommendation lists use a level-three item heading and explain `是什么` and `为什么`; add `补充` only when `notes` is useful.
+- For Q&A collections, set `summary.catalog_format` to `qa`; render each `question` as a heading with its concise `answer` below. An optional `topic` groups related exchanges.
 - embed an item's image only when it has `visual_id`.
 
 ### `visual`
@@ -85,7 +87,9 @@ Never render these as note sections:
 ## Quality gates
 
 - Do not summarize inaccessible body content from a title or snippet.
-- `catalog`: `source_item_count`, `content_items`, and rendered item counts must all match.
+- `catalog`: `source_item_count`, `content_items`, and rendered item counts must all match; recommendation items require `name`, `what`, and `why`, while Q&A items require `question` and `answer`.
 - `visual`: `source_item_count`, `content_items`, and rendered item counts must all match; every item must render exactly one unique image. Use one combined comparison image for a before/after pair.
 - `technical`: do not claim feasibility without an actual result or a concrete authoritative check explaining why local execution was impossible.
+- `technical`: `summary.procedure` may be omitted when no useful reader action exists; do not force a tutorial into a tool introduction.
+- `technical` evaluation: include `summary.decision_points` only when each point changes the recommendation or deployment choice.
 - Verify every copied visual exists, every placeholder is resolved, optional Mermaid fences are balanced, and no machine-local path appears in note prose or frontmatter.

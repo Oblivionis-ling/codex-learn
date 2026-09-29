@@ -82,7 +82,7 @@ class LearnSmokeTest(unittest.TestCase):
             self.assertEqual(result["retained_visuals"], 2)
             self.assertFalse(result["warnings"])
             self.assertIn("![[Attachments/Learn/bilibili-BV1C6M46uEe3/", note)
-            self.assertIn("**实际结果：**", note)
+            self.assertIn("## 可行性验证", note)
             self.assertNotIn("{{", note)
             self.assertNotIn("transcript-", note)
             self.assertNotIn("证据 `", note)

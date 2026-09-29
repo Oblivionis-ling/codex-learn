@@ -226,11 +226,31 @@ def validate_bundle(args: argparse.Namespace) -> int:
         warnings.append("summary.one_sentence is missing")
     if not summary.get("overview"):
         errors.append("summary.overview is required")
+    presentation = summary.get("presentation")
+    if content_profile == "technical" and presentation not in (
+        None,
+        "introduction",
+        "workflow",
+        "evaluation",
+    ):
+        errors.append("technical summary.presentation must be introduction, workflow, or evaluation")
+    decision_points = summary.get("decision_points", [])
+    if content_profile == "technical" and decision_points is not None and not isinstance(decision_points, list):
+        errors.append("technical summary.decision_points must be a list when present")
+    if content_profile == "technical" and presentation != "evaluation" and decision_points:
+        warnings.append("summary.decision_points is used only by technical evaluation presentation")
     procedure = summary.get("procedure", [])
-    if content_profile == "technical" and (not isinstance(procedure, list) or not procedure):
-        errors.append("technical profile requires non-empty summary.procedure")
+    if content_profile == "technical" and procedure is not None and not isinstance(procedure, list):
+        errors.append("technical summary.procedure must be a list when present")
+    if content_profile == "technical" and presentation == "evaluation" and procedure:
+        warnings.append("summary.procedure is ignored by technical evaluation presentation")
     if content_profile != "technical" and procedure:
         warnings.append(f"{content_profile} profile ignores summary.procedure")
+    catalog_format = summary.get("catalog_format")
+    if content_profile == "catalog" and catalog_format not in (None, "recommendations", "qa"):
+        errors.append("catalog summary.catalog_format must be recommendations or qa")
+    if content_profile != "catalog" and catalog_format:
+        warnings.append(f"{content_profile} profile ignores summary.catalog_format")
 
     duration = source.get("duration_seconds")
     timeline = summary.get("timeline", [])
@@ -304,10 +324,12 @@ def validate_bundle(args: argparse.Namespace) -> int:
             if not isinstance(item, dict):
                 errors.append(f"{prefix} must be an object")
                 continue
-            for field in ("name", "what"):
+            is_qa_catalog = content_profile == "catalog" and catalog_format == "qa"
+            required_fields = ("question", "answer") if is_qa_catalog else ("name", "what")
+            for field in required_fields:
                 if not item.get(field):
                     errors.append(f"{prefix}.{field} is required")
-            if content_profile == "catalog" and not item.get("why"):
+            if content_profile == "catalog" and not is_qa_catalog and not item.get("why"):
                 errors.append(f"{prefix}.why is required for catalog")
             visual_id = str(item.get("visual_id") or "")
             if content_profile == "visual" and not visual_id:

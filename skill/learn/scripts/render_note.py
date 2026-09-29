@@ -33,18 +33,6 @@ def numbered(items: list[object], empty: str = "") -> str:
     return "\n".join(f"{index}. {item}" for index, item in enumerate(values, 1)) or empty
 
 
-def format_duration(seconds: float) -> str:
-    value = max(0.0, float(seconds))
-    if value < 60:
-        return f"{value:.1f} 秒"
-    total = int(round(value))
-    hours, remainder = divmod(total, 3600)
-    minutes, seconds_part = divmod(remainder, 60)
-    if hours:
-        return f"{hours} 小时 {minutes} 分 {seconds_part} 秒"
-    return f"{minutes} 分 {seconds_part} 秒"
-
-
 def safe_filename(value: str, fallback: str = "untitled", limit: int = 90) -> str:
     name = re.sub(r'[<>:"/\\|?*\x00-\x1f]+', "_", value).strip(" ._")
     return (name or fallback)[:limit]
@@ -201,23 +189,11 @@ def render_visual_ids(
 def experiment_markdown(experiment: object) -> str:
     if not isinstance(experiment, dict) or not experiment:
         raise ValueError("technical profile requires an experiment result")
-    parts = [f"**状态：** `{experiment.get('status', '')}`"]
-    if experiment.get("input"):
-        parts.append(f"**测试输入：** {experiment['input']}")
-    if experiment.get("success_condition"):
-        parts.append(f"**成功条件：** {experiment['success_condition']}")
-    if experiment.get("method"):
-        parts.append("**实际步骤：**\n\n" + numbered(experiment["method"]))
-    if experiment.get("result"):
-        parts.append(f"**实际结果：** {experiment['result']}")
-    if isinstance(experiment.get("elapsed_seconds"), (int, float)):
-        parts.append(f"**耗时：** {format_duration(float(experiment['elapsed_seconds']))}")
-    errors = experiment.get("errors")
-    if isinstance(errors, list) and errors:
-        parts.append("**错误或修正：**\n\n" + bullets(errors))
-    if experiment.get("conclusion"):
-        parts.append(f"**结论：** {experiment['conclusion']}")
-    return "\n\n".join(parts)
+    result = str(experiment.get("result") or "").strip()
+    conclusion = str(experiment.get("conclusion") or "").strip()
+    if result and conclusion and result != conclusion:
+        return f"{result} {conclusion}"
+    return result or conclusion
 
 
 def item_text(item: dict[str, Any], visual_profile: bool) -> str:
@@ -250,17 +226,33 @@ def content_body_markdown(
     visuals = visual_index(bundle)
 
     if profile == "technical":
+        presentation = str(summary.get("presentation") or "introduction")
+        if presentation not in {"introduction", "workflow", "evaluation"}:
+            raise ValueError("technical summary.presentation must be introduction, workflow, or evaluation")
         procedure = summary.get("procedure", [])
-        if not isinstance(procedure, list) or not procedure:
-            raise ValueError("technical profile requires summary.procedure")
-        parts = ["## 技术是什么", overview]
-        diagram = summary_diagram_markdown(bundle)
-        if diagram:
-            parts.extend(["### 结构图", diagram])
+        if procedure is None:
+            procedure = []
+        if not isinstance(procedure, list):
+            raise ValueError("technical summary.procedure must be a list when present")
+        parts = ["## 结论", overview] if presentation == "evaluation" else ["## 技术是什么", overview]
+        if presentation == "evaluation":
+            decision_points = summary.get("decision_points", [])
+            if decision_points is None:
+                decision_points = []
+            if not isinstance(decision_points, list):
+                raise ValueError("technical summary.decision_points must be a list when present")
+            if decision_points:
+                parts.extend(["## 适用判断", bullets(decision_points)])
+        else:
+            diagram = summary_diagram_markdown(bundle)
+            if diagram:
+                parts.extend(["### 结构图", diagram])
+            if procedure:
+                parts.extend(["## 怎么操作", numbered(procedure)])
         selected = render_visual_ids(summary.get("visual_ids", []), visuals, writer, evidence_dir)
         if selected:
-            parts.extend(["### 操作示意", selected])
-        parts.extend(["## 怎么操作", numbered(procedure), "## 可行性验证", experiment_markdown(bundle.get("experiment"))])
+            parts.append(selected)
+        parts.extend(["## 可行性验证", experiment_markdown(bundle.get("experiment"))])
         figures = [
             str(item.get("id"))
             for item in bundle.get("experiment_figures", [])
@@ -268,7 +260,7 @@ def content_body_markdown(
         ]
         rendered_figures = render_visual_ids(figures, visuals, writer, evidence_dir)
         if rendered_figures:
-            parts.extend(["### 实验图", rendered_figures])
+            parts.append(rendered_figures)
         return "\n\n".join(parts)
 
     if bundle.get("experiment"):
@@ -278,6 +270,9 @@ def content_body_markdown(
 
     if profile == "overview":
         parts = ["## 全文总结", overview]
+        diagram = summary_diagram_markdown(bundle)
+        if diagram:
+            parts.extend(["## 内容结构图", diagram])
         key_points = summary.get("key_points", [])
         if isinstance(key_points, list) and key_points:
             parts.extend(["## 要点", bullets(key_points)])
@@ -292,10 +287,26 @@ def content_body_markdown(
     heading = "## 完整清单" if profile == "catalog" else "## 逐项展示"
     intro = "## 简短总览" if profile == "catalog" else "## 简单总结"
     parts = [intro, overview, heading]
+    catalog_format = str(summary.get("catalog_format") or "recommendations")
+    if profile == "catalog" and catalog_format not in {"recommendations", "qa"}:
+        raise ValueError("catalog summary.catalog_format must be recommendations or qa")
     used_visuals: set[str] = set()
+    current_topic = None
     for index, item in enumerate(items, 1):
         if not isinstance(item, dict):
             raise ValueError(f"content_items[{index - 1}] must be an object")
+        if profile == "catalog" and catalog_format == "qa":
+            question = str(item.get("question") or "").strip()
+            answer = str(item.get("answer") or "").strip()
+            if not question or not answer:
+                raise ValueError(f"Q&A catalog item {index} requires question and answer")
+            topic = str(item.get("topic") or "").strip()
+            if topic and topic != current_topic:
+                parts.append(f"### {topic}")
+            current_topic = topic or None
+            item_heading = "####" if topic else "###"
+            parts.append(f"{item_heading} {index}. {question}\n\n**回答：** {answer}")
+            continue
         name = str(item.get("name") or "").strip()
         if not name:
             raise ValueError(f"content_items[{index - 1}].name is required")

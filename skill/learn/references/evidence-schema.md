@@ -50,14 +50,20 @@ Common fields:
 {
   "one_sentence": "Concise conclusion",
   "overview": "Compact whole-source synthesis",
+  "presentation": "introduction|workflow|evaluation",
+  "catalog_format": "recommendations|qa",
   "key_points": ["Only useful takeaways"],
+  "decision_points": ["Decision-changing reason or limitation"],
   "procedure": ["Executable technical step"],
   "visual_ids": ["optional-selected-visual"]
 }
 ```
 
 - `overview` is required for every profile.
-- `procedure` is required and non-empty only for `technical`.
+- `presentation` selects the technical presentation form; it is optional and defaults to `introduction`.
+- `decision_points` is optional and is rendered only for a technical `evaluation` presentation.
+- `catalog_format` is optional for `catalog`; it defaults to recommendations and may be `qa` for interview or FAQ exchanges.
+- `procedure` is optional for `technical`; include concise actionable steps only when they help the reader use or reproduce the method.
 - `key_points` is mainly for `overview`; omit it when it repeats the overview.
 - `visual_ids` is optional and must reference selected items from the visual collections.
 
@@ -81,6 +87,7 @@ Each item uses:
 
 - Preserve source order.
 - `catalog` requires `name`, `what`, and `why` for every item.
+- With `summary.catalog_format: "qa"`, each `catalog` item instead requires `question` and `answer`; an optional `topic` groups exchanges.
 - `visual` requires `name`, `what`, and a unique valid `visual_id`; `why` is optional.
 - Do not shorten a source's numbered list by silently dropping items.
 
@@ -102,6 +109,8 @@ Use only when `content_profile` is `technical`:
 ```
 
 Use `not_run` only when local execution is unsafe or impossible; include the authoritative check performed and the concrete reason in `result` and `conclusion`. Do not add `experiment` for other profiles.
+
+Keep the detailed experiment record here for grounding and cleanup. The rendered note uses only a concise `result` and `conclusion`, normally one or two sentences; omit routine inputs, commands, elapsed time, and corrections from the note unless they change what the result means.
 
 ## Visual collections
 

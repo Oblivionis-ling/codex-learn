@@ -52,6 +52,8 @@ Read `references/content-profiles.md` and choose exactly one `content_profile`:
 
 When profiles overlap, choose the one that determines what the reader must retain. A list of visually distinct outfits is `visual`; a list of small household accessories is `catalog`; a tutorial containing several steps is `technical`.
 
+Read `references/report-templates.md` after choosing the profile. For `technical`, choose a concise tool/Skill introduction, an actionable tutorial/workflow, or a comparison/research/feasibility assessment. Start with a concrete conclusion and omit sections that do not help the reader. A `technical` note may omit `怎么操作` when the source offers no useful reader actions.
+
 ## Acquire only what the profile needs
 
 Use the most authoritative available representation, escalating only as necessary:
@@ -73,7 +75,7 @@ The render bundle must contain:
 
 - `content_profile`;
 - a grounded `summary.one_sentence` and `summary.overview`;
-- `summary.procedure` for `technical`;
+- `summary.procedure` for `technical` only when useful reader actions exist;
 - `source_item_count` and every `content_item` for `catalog` or `visual`;
 - one valid `visual_id` per `visual` item;
 - a real experiment result for `technical` when a safe local test is feasible;
@@ -110,14 +112,16 @@ Do not create an experiment section, sandbox, experiment figure, or planned expe
 
 Follow `references/output-contract.md` and run `scripts/render_note.py --evidence <bundle.json>`.
 
-The renderer chooses the note body from `content_profile`:
+The renderer chooses the note body from `content_profile` and its matching report template:
 
-- `technical`: 技术是什么 → 怎么操作 → 可行性验证;
-- `overview`: 全文总结 → 要点;
+- `technical`: the selected presentation form in `references/report-templates.md`;
+- `overview`: 全文总结 → optional 要点 or 内容结构图;
 - `catalog`: 简短总览 → 完整清单，每项说明“是什么”和“为什么”;
 - `visual`: 简单总结 → 逐项展示，每项一张来源图片和简短说明.
 
 Keep optional Mermaid structure or knowledge relations only when they materially improve understanding. Never add empty sections. Never render source excerpts, claim/evidence tables, limitations, full timelines, transcripts, or generic supporting attachments.
+
+Use `references/report-templates.md` for the final note shape. Keep test inputs, commands, OCR/ASR details, timings, and routine corrections in transient evidence unless a detail changes the conclusion; the note should state the observed result and its scope in a sentence or two.
 
 ## Verify and clean up
 
