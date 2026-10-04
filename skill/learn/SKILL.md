@@ -17,6 +17,16 @@ $learn <link-or-local-file>
 
 Do not ask the user to choose a template. Infer the platform and content profile, process the necessary modalities, write the note, verify it, and return the conclusion and output path.
 
+## Invocation update hook
+
+Before runtime checks or source processing, run `scripts/check_update.py --json` from the active Skill installation, using its absolute script path and the Python selected by the workspace instructions. Keep the command's working directory outside the Skill folder so directory replacement is possible.
+
+The hook checks the official repository's latest stable release on the first invocation of each local calendar day. It records failed attempts too, compares numeric versions without downgrading, and keeps update state beside the OS-local configuration. Ordinary installations preserve the previous Skill in an OS-local backup; Git installations require a clean checkout and a fast-forward update.
+
+- If `reload_skill` is true, read the returned `skill_file` again and continue from runtime readiness using the updated instructions and resources. Do not rerun the update hook within this invocation.
+- If the result is `up_to_date`, `already_checked`, `busy`, or `failed`, or the command cannot run, continue with the currently installed Skill. Do not retry the check within this invocation or interrupt the learning task for an update.
+- Mention a successful version change briefly. Keep update logs out of the learning note.
+
 ## Runtime readiness
 
 Run `scripts/bootstrap.py status --json` with the Python selected by the active workspace instructions. Run `provision` only when `provision_current` is false.
