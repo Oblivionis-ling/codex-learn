@@ -86,6 +86,8 @@ Never render these as note sections:
 
 ## Quality gates
 
+- Apply `plain-language.md` to the whole note: necessary terms are understandable in context, concept names remain consistent, and each paragraph or section adds useful information.
+- Preserve material facts, causality, prerequisites, quantities, and uncertainty when simplifying. Shorter text alone is not a readability result.
 - Do not summarize inaccessible body content from a title or snippet.
 - `catalog`: `source_item_count`, `content_items`, and rendered item counts must all match; recommendation items require `name`, `what`, and `why`, while Q&A items require `question` and `answer`.
 - `visual`: `source_item_count`, `content_items`, and rendered item counts must all match; every item must render exactly one unique image. Use one combined comparison image for a before/after pair.

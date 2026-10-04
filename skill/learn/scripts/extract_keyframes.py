@@ -72,8 +72,15 @@ def main() -> int:
                 continue
             filename = f"frame-{int(round(seconds * 1000)):010d}ms.png"
             path = output_dir / filename
-            if not cv2.imwrite(str(path), frame, [cv2.IMWRITE_PNG_COMPRESSION, 3]):
-                frames.append({"requested_seconds": seconds, "error": "frame write failed"})
+            encoded_ok, encoded = cv2.imencode(".png", frame, [cv2.IMWRITE_PNG_COMPRESSION, 3])
+            if not encoded_ok:
+                frames.append({"requested_seconds": seconds, "error": "frame encode failed"})
+                continue
+            try:
+                # Python file I/O preserves Unicode paths on Windows.
+                path.write_bytes(encoded.tobytes())
+            except OSError as error:
+                frames.append({"requested_seconds": seconds, "error": f"frame write failed: {error}"})
                 continue
             actual_seconds = float(capture.get(cv2.CAP_PROP_POS_MSEC) or seconds * 1000.0) / 1000.0
             frames.append(

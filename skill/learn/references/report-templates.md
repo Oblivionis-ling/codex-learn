@@ -1,6 +1,6 @@
 # Report templates
 
-Choose one template by what the reader needs to keep. Keep the note shorter than the source: name the subject and its point directly, then include only details that help the reader understand, use, or judge it. Do not turn acquisition work, promotional claims, generic cautions, or every available section into note content. Keep caveats that change what the reader can conclude or do.
+Choose one template by what the reader needs to keep. Make the note as concise as understanding permits: name the subject and its point directly, then include the explanations and details that help the reader understand, use, or judge it. Do not turn acquisition work, promotional claims, generic cautions, or every available section into note content. Keep caveats that change what the reader can conclude or do.
 
 The `technical` profile has three presentation forms. Choose between them before writing; the other profiles each use one form.
 
@@ -117,6 +117,7 @@ Cover every distinct variant, in source order, with one useful original image pe
 
 ## Shared editing rules
 
+- Apply `plain-language.md` to every template. The opening explains the subject, actions tell the reader what to do, and validation adds the observed result and its scope; avoid repeating the same explanation in each section.
 - Start with a concrete subject and action: say what the thing is, what it does, and what problem or need it addresses. Avoid vague hooks such as “黑科技”.
 - Prefer the user's own concise rewrites as style examples when available; preserve their intended emphasis and wording level.
 - Make headings conditional. Do not render an empty or low-value section to satisfy a fixed outline.

@@ -69,6 +69,10 @@ For `catalog`, make sure every item presented by the source is captured. For `vi
 
 ## Prepare a compact render bundle
 
+Read `references/plain-language.md` before drafting `summary` and `content_items`. Write for a reader who is new to the subject: use familiar words, explain necessary terms where they first matter, and use one stable name for each concept. Make sentences easy to follow while preserving facts, causal links, conditions, and uncertainty.
+
+Review the whole planned note before validation. Remove repeated explanations and conclusions across sections; each section should add information the reader needs. State the observed experiment result once, then use the conclusion to explain its scope. Optimize for understanding, not minimum length. English word-count limits are not Chinese character limits.
+
 Follow `references/evidence-schema.md`. Use artifacts, transcripts, locators, and claim checks only as transient working material needed to avoid hallucination; do not render them as sections and do not retain them by default.
 
 The render bundle must contain:
@@ -126,6 +130,7 @@ Use `references/report-templates.md` for the final note shape. Keep test inputs,
 ## Verify and clean up
 
 1. Verify the Markdown, optional Mermaid fences, and every embedded attachment.
+   Re-read the rendered prose using `references/plain-language.md`: resolve unexplained necessary terms, overloaded sentences, and semantic repetition without removing needed facts or list items. The renderer preserves supplied wording; it does not assess understanding.
 2. Confirm that every `visual` content item has exactly one rendered image and every `catalog` item appears in the note.
 3. Run `scripts/job.py finalize --manifest <job.json> --evidence <bundle.json> --note <note.md>`. This verifies the note and local embeds before deleting anything.
 4. Preserve only the final note, its copied visuals, and the compact manifest written by `finalize`. Delete raw media, extracted audio, transcripts, OCR output, evidence bundles, candidate/rejected frames, contact sheets, previews, and unreferenced experiment files.
