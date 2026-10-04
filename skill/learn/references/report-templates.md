@@ -117,9 +117,8 @@ Cover every distinct variant, in source order, with one useful original image pe
 
 ## Shared editing rules
 
-- Apply `plain-language.md` to every template. The opening explains the subject, actions tell the reader what to do, and validation adds the observed result and its scope; avoid repeating the same explanation in each section.
+- Follow the [writing rules](../SKILL.md#write-clear-notes) for every template.
 - Start with a concrete subject and action: say what the thing is, what it does, and what problem or need it addresses. Avoid vague hooks such as “黑科技”.
-- Prefer the user's own concise rewrites as style examples when available; preserve their intended emphasis and wording level.
 - Make headings conditional. Do not render an empty or low-value section to satisfy a fixed outline.
 - Keep precise numbers, prerequisites, and limitations only when they change the reader's understanding or decision.
 - Put source images beside the point they support. Do not create a separate `操作示意` section by default.

@@ -112,7 +112,7 @@ Use `not_run` only when local execution is unsafe or impossible; include the aut
 
 Keep the detailed experiment record here for grounding and cleanup. The rendered note uses only a concise `result` and `conclusion`, normally one or two sentences; omit routine inputs, commands, elapsed time, and corrections from the note unless they change what the result means.
 
-`result` states what was observed; `conclusion` states what that observation establishes or leaves unverified. Do not paraphrase the same finding in both fields. Write reader-facing fields using `plain-language.md`; the renderer does not rewrite them.
+`result` states what was observed; `conclusion` states what that observation establishes or leaves unverified. Do not paraphrase the same finding in both fields. Follow the [writing rules](../SKILL.md#write-clear-notes) for reader-facing fields; the renderer does not rewrite them.
 
 ## Visual collections
 

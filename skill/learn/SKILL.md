@@ -67,11 +67,19 @@ Prefer official text and subtitles over media download. Do not bypass login, CAP
 
 For `catalog`, make sure every item presented by the source is captured. For `visual`, identify every presented variant and select one non-redundant representative original image or frame for each. For `technical`, capture the inputs, steps, dependencies, expected output, and the smallest testable claim.
 
+## Write clear notes
+
+Apply these rules to all reader-facing text, including summaries, item descriptions, captions, steps, and validation results. Write in the requested language for a reader new to the subject unless the user specifies another audience.
+
+- Use familiar words and concrete actions. Explain what something does before introducing an unfamiliar category.
+- Keep exact product names, commands, parameters, and technical distinctions needed for identification, use, or accuracy.
+- Explain necessary unfamiliar terms where they first help understanding; describe their function in context. Use one stable name for each concept while preserving distinct concepts.
+- Give each sentence one main idea. Make the actor, action, object, and necessary conditions clear; keep cause and effect connected and paragraphs coherent.
+- Preserve material facts, quantities, prerequisites, negation, exceptions, and uncertainty. Distinguish source claims from observed results.
+- Review the note as a whole. Remove filler, empty praise, repeated definitions and conclusions, and cautions that do not affect the reader's decision. Each section should add useful information.
+- Preserve every distinct list item, useful question and answer, and visual variant required by the chosen profile. Keep enough explanation to understand the subject and use the information.
+
 ## Prepare a compact render bundle
-
-Read `references/plain-language.md` before drafting `summary` and `content_items`. Write for a reader who is new to the subject: use familiar words, explain necessary terms where they first matter, and use one stable name for each concept. Make sentences easy to follow while preserving facts, causal links, conditions, and uncertainty.
-
-Review the whole planned note before validation. Remove repeated explanations and conclusions across sections; each section should add information the reader needs. State the observed experiment result once, then use the conclusion to explain its scope. Optimize for understanding, not minimum length. English word-count limits are not Chinese character limits.
 
 Follow `references/evidence-schema.md`. Use artifacts, transcripts, locators, and claim checks only as transient working material needed to avoid hallucination; do not render them as sections and do not retain them by default.
 
@@ -130,7 +138,7 @@ Use `references/report-templates.md` for the final note shape. Keep test inputs,
 ## Verify and clean up
 
 1. Verify the Markdown, optional Mermaid fences, and every embedded attachment.
-   Re-read the rendered prose using `references/plain-language.md`: resolve unexplained necessary terms, overloaded sentences, and semantic repetition without removing needed facts or list items. The renderer preserves supplied wording; it does not assess understanding.
+   Re-read the rendered prose against the [writing rules](#write-clear-notes). The renderer preserves supplied wording; it does not assess understanding.
 2. Confirm that every `visual` content item has exactly one rendered image and every `catalog` item appears in the note.
 3. Run `scripts/job.py finalize --manifest <job.json> --evidence <bundle.json> --note <note.md>`. This verifies the note and local embeds before deleting anything.
 4. Preserve only the final note, its copied visuals, and the compact manifest written by `finalize`. Delete raw media, extracted audio, transcripts, OCR output, evidence bundles, candidate/rejected frames, contact sheets, previews, and unreferenced experiment files.
