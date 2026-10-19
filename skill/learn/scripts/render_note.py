@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import shutil
 from datetime import datetime, timezone
@@ -13,6 +14,8 @@ from pathlib import Path
 from typing import Any
 
 from learn_config import absolute_path, load_config, obsidian_attachment_folder
+from cleanup import discard_path
+from render_card import CardOutput, create_card
 
 
 IMAGE_SUFFIXES = {".avif", ".bmp", ".gif", ".jpeg", ".jpg", ".png", ".svg", ".webp"}
@@ -150,9 +153,33 @@ class AttachmentWriter:
 
     def rollback(self) -> None:
         for path in reversed(self.created):
-            path.unlink(missing_ok=True)
+            discard_path(path, self.destination)
         if self.destination.is_dir() and not any(self.destination.iterdir()):
-            self.destination.rmdir()
+            discard_path(self.destination, self.destination.parent)
+
+    def embed_card(self, card: CardOutput, output_path: Path) -> tuple[str, dict[str, str]]:
+        digest = hashlib.sha256(card.png + card.svg).hexdigest()[:12]
+        self.destination.mkdir(parents=True, exist_ok=True)
+        paths: dict[str, str] = {}
+        for extension, data in (("png", card.png), ("svg", card.svg)):
+            target = self.destination / f"learning-card-{digest}.{extension}"
+            if target.exists():
+                if target.read_bytes() != data:
+                    raise ValueError(f"Generated card path contains different data: {target}")
+            else:
+                self.created.append(target)
+                with target.open("xb") as stream:
+                    stream.write(data)
+            paths[extension] = str(target)
+            if str(target) not in self.copied:
+                self.copied.append(str(target))
+        png = Path(paths["png"])
+        if self.mode == "wiki":
+            embed = f"![[{self.wiki_root}/{png.name}]]"
+        else:
+            embed = f"![学习小卡]({self.wiki_root}/{png.name})"
+        svg_relative = Path(os.path.relpath(paths["svg"], output_path.parent)).as_posix()
+        return f"## 学习小卡\n\n{embed}\n\n[矢量版 SVG](<{svg_relative}>)", paths
 
 
 def visual_index(bundle: dict[str, Any]) -> dict[str, dict[str, Any]]:
@@ -368,7 +395,13 @@ def render(args: argparse.Namespace) -> int:
     source = bundle.get("source", {})
     profile = str(bundle.get("content_profile") or "")
     writer = AttachmentWriter(output_path, vault, attachment_folder, str(bundle.get("job_id", "job")))
+    card_paths: dict[str, str] = {}
     try:
+        card = create_card(bundle, evidence_path.parent) if "learning_card" in bundle else None
+        body = content_body_markdown(bundle, writer, evidence_path.parent)
+        if card:
+            card_markdown, card_paths = writer.embed_card(card, output_path)
+            body = f"{card_markdown}\n\n{body}"
         values = {
             "title": yaml_string(source.get("title", "未命名来源")),
             "source_url": yaml_string(source.get("url", "")),
@@ -380,8 +413,9 @@ def render(args: argparse.Namespace) -> int:
             ),
             "content_profile": yaml_string(profile),
             "tags": json.dumps(bundle.get("tags", []), ensure_ascii=False),
-            "content_body": content_body_markdown(bundle, writer, evidence_path.parent),
+            "content_body": body,
             "knowledge_section": knowledge_section_markdown(bundle),
+            "learn_version": (Path(__file__).resolve().parent.parent / "VERSION").read_text(encoding="utf-8").strip(),
         }
         note = template
         for key, value in values.items():
@@ -392,8 +426,11 @@ def render(args: argparse.Namespace) -> int:
             raise ValueError(f"Unresolved template placeholders: {', '.join(unresolved)}")
         note = re.sub(r"\n{3,}", "\n\n", note).rstrip() + "\n"
         output_path.write_text(note, encoding="utf-8")
-    except Exception:
-        writer.rollback()
+    except Exception as error:
+        try:
+            writer.rollback()
+        except (OSError, ValueError) as cleanup_error:
+            raise ValueError(f"{error}; generated attachments retained because cleanup failed: {cleanup_error}") from error
         raise
     print(
         json.dumps(
@@ -403,6 +440,7 @@ def render(args: argparse.Namespace) -> int:
                 "content_profile": profile,
                 "attachments": writer.copied,
                 "retained_visuals": len(writer.embedded_ids),
+                "learning_card": card_paths or None,
                 "warnings": writer.warnings,
             },
             ensure_ascii=False,

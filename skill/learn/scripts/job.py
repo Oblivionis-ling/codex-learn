@@ -7,13 +7,14 @@ import argparse
 import hashlib
 import json
 import re
-import shutil
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 
 from learn_config import configured_workspace, load_config
+from cleanup import discard_path
+from render_card import card_errors
 
 
 PLATFORM_HOSTS = {
@@ -28,6 +29,7 @@ EVIDENCE_LEVELS = {"A", "B", "C", "D"}
 VERIFICATION_STATES = {"verified", "partially_verified", "unverified", "contradicted"}
 OBSIDIAN_EMBED_RE = re.compile(r"!\[\[([^\]|]+)(?:\|[^\]]+)?\]\]")
 MARKDOWN_IMAGE_RE = re.compile(r"!\[[^\]]*\]\(([^)]+)\)")
+MARKDOWN_LINK_RE = re.compile(r"(?<!!)\[[^\]]*\]\(([^)]+)\)")
 
 
 def detect_platform(value: str) -> str:
@@ -341,6 +343,7 @@ def validate_bundle(args: argparse.Namespace) -> int:
                     errors.append(f"visual items must use unique visual_id values: {visual_id}")
                 used_item_visuals.add(visual_id)
 
+    errors.extend(card_errors(bundle))
     report = {
         "valid": not errors,
         "errors": errors,
@@ -384,6 +387,10 @@ def note_visuals(note_path: Path, vault: Path | None) -> list[Path]:
         if urlparse(target).scheme in {"http", "https", "data"}:
             continue
         visuals.append((note_path.parent / target).resolve())
+    for value in MARKDOWN_LINK_RE.findall(text):
+        target = value.strip().strip("<>")
+        if not urlparse(target).scheme and Path(target).suffix.lower() == ".svg":
+            visuals.append((note_path.parent / target).resolve())
     missing = [str(path) for path in visuals if not path.is_file()]
     if missing:
         raise ValueError(f"note references missing local visuals: {', '.join(missing)}")
@@ -391,12 +398,7 @@ def note_visuals(note_path: Path, vault: Path | None) -> list[Path]:
 
 
 def remove_path(path: Path) -> None:
-    if path.is_symlink():
-        path.unlink()
-    elif path.is_dir():
-        shutil.rmtree(path)
-    elif path.exists():
-        path.unlink()
+    discard_path(path, path.parent)
 
 
 def finalize_job(args: argparse.Namespace) -> int:
@@ -429,6 +431,13 @@ def finalize_job(args: argparse.Namespace) -> int:
         except ValueError:
             vault = None
     visuals = note_visuals(note_path, vault)
+    card_paths = {
+        path.suffix[1:]: str(path)
+        for path in visuals
+        if re.fullmatch(r"learning-card-[0-9a-f]{12}\.(?:png|svg)", path.name)
+    }
+    if card_paths and set(card_paths) != {"png", "svg"}:
+        raise ValueError("A learning card requires both its PNG embed and SVG link")
 
     profile = args.content_profile
     source = manifest.get("source", {})
@@ -461,6 +470,7 @@ def finalize_job(args: argparse.Namespace) -> int:
         "source": source,
         "note_path": str(note_path),
         "retained_visual_count": len(visuals),
+        "learning_card": card_paths or None,
     }
     dump_json(compact, manifest_path)
     dump_json(
@@ -470,6 +480,7 @@ def finalize_job(args: argparse.Namespace) -> int:
             "note": str(note_path),
             "content_profile": profile,
             "retained_visuals": len(visuals),
+            "learning_card": card_paths or None,
             "deleted": deleted,
             "shared_cache_preserved": True,
         }

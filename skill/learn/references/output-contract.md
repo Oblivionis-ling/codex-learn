@@ -1,6 +1,6 @@
 # Output contract
 
-Return a concise conversational result and one compact Obsidian note.
+Return a concise conversational result, one compact Obsidian note, and its PNG/SVG review card.
 
 ## Conversational result
 
@@ -9,7 +9,7 @@ Lead with:
 1. inferred `content_profile` and acquisition completeness;
 2. the useful conclusion;
 3. technical validation result when the profile is `technical`;
-4. note path, retained visual count, and cleanup status.
+4. note path, card path, retained visual count, and cleanup status.
 
 Do not repeat the full note, evidence audit, missing-claim inventory, or transcript details in chat.
 
@@ -19,6 +19,7 @@ Use `assets/obsidian-note-template.md` with:
 
 - compact YAML frontmatter: title, source, platform, author, publication/retrieval dates, profile, and tags;
 - a profile-specific body;
+- one code-rendered review card before the main body, with its PNG embedded and SVG linked;
 - optional compact `[[wikilinks]]` or a relationship graph only when useful;
 - the original source URL.
 
@@ -31,6 +32,8 @@ Use this filename pattern:
 Do not label generated files `最终版`.
 
 ## Profile bodies
+
+The card follows [learning-cards.md](learning-cards.md). The profile-specific body below retains the full required information, including every list item and visual variant.
 
 ### `technical`
 
@@ -78,6 +81,7 @@ Never render these as note sections:
 ## Attachment policy
 
 - Copy only visual IDs referenced by `summary.visual_ids`, `content_items[].visual_id`, or technical experiment figures.
+- Retain the code-generated card PNG and SVG alongside those source visuals; they are final outputs.
 - Do not display timestamps, locators, evidence IDs, or machine-local paths in captions.
 - Do not copy transcript files, audio, video, JSON, contact sheets, or unused candidate frames.
 - When a Vault is configured, copy selected visuals into its configured attachment folder under a job-specific `Learn` subfolder and use Obsidian embeds.
@@ -94,3 +98,4 @@ Never render these as note sections:
 - `technical`: `summary.procedure` may be omitted when no useful reader action exists; do not force a tutorial into a tool introduction.
 - `technical` evaluation: include `summary.decision_points` only when each point changes the recommendation or deployment choice.
 - Verify every copied visual exists, every placeholder is resolved, optional Mermaid fences are balanced, and no machine-local path appears in note prose or frontmatter.
+- Read the rendered card for legible glyphs, line breaks, complete labels, accurate arrows, and grounded selection coverage. Both the PNG embed and SVG link must resolve before cleanup.

@@ -7,6 +7,7 @@ author: "{{author}}"
 published: "{{published_at}}"
 retrieved: "{{retrieved_at}}"
 profile: "{{content_profile}}"
+learn_version: "{{learn_version}}"
 tags: {{tags}}
 ---
 

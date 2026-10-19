@@ -13,6 +13,7 @@ Use UTF-8 JSON with `schema_version: 1`. Keep it only until the final note and s
   "tags": [],
   "source": {},
   "summary": {},
+  "learning_card": {},
   "source_item_count": 0,
   "content_items": [],
   "experiment": {},
@@ -68,6 +69,10 @@ Common fields:
 - `visual_ids` is optional and must reference selected items from the visual collections.
 
 An optional `summary_diagram` may contain Mermaid code. Supply it only when the diagram improves technical or conceptual understanding; the renderer does not auto-generate one.
+
+## Learning card
+
+New tasks include `learning_card` with the fields and profile rules in [learning-cards.md](learning-cards.md). The card is a synthesized review aid, drawn locally in code. Its selected items or images do not reduce the note's required coverage. Existing bundles without this field remain supported.
 
 ## Content items
 

@@ -1,11 +1,11 @@
 ---
 name: learn
-description: "Turn public articles, image posts, audio or video links, and local multimodal files into compact, practical Obsidian notes whose structure adapts to the content: explain what a technology is, how to use it, and whether it works; briefly summarize general knowledge; enumerate every item in recommendation lists with what it is and why it matters; and pair every variant in visual showcases such as outfits with one representative source image. Run a minimal sandbox validation only for technical content, archive only visuals used by the final note, and discard transcripts and intermediate evidence by default. Use when the user invokes $learn with a link or file, or asks to learn from or archive web, WeChat, Xiaohongshu, Bilibili, video, audio, screenshots, or attachments."
+description: "Turn public articles, image posts, audio or video links, and local multimodal files into practical Obsidian notes with one concise PNG/SVG review card rendered locally in code. Adapt the note to technical explanations, general knowledge, complete recommendation lists, or image-based showcases. Run a minimal validation only for technical content and retain only the note, its card, and useful source visuals. Use when the user invokes $learn with a link or file, or asks to learn from or archive web, WeChat, Xiaohongshu, Bilibili, video, audio, screenshots, or attachments."
 ---
 
 # Learn
 
-Turn one source into a concise, useful Obsidian note. Acquire enough of every material modality to understand the source, then keep only the final note and the visuals it actually uses.
+Turn one source into a useful Obsidian note with a compact review card. Acquire enough of every material modality to understand the source, then retain the note, its PNG/SVG card, and the source visuals it uses.
 
 ## Invocation contract
 
@@ -102,8 +102,15 @@ The render bundle must contain:
 - one valid `visual_id` per `visual` item;
 - a real experiment result for `technical` when a safe local test is feasible;
 - only intentional knowledge links and relations.
+- `learning_card`, synthesized according to `references/learning-cards.md`.
 
 Validate it with `scripts/job.py validate --evidence <bundle.json>` before rendering.
+
+## Synthesize the review card
+
+Read `references/learning-cards.md`. Give each new note one short title, one grounded takeaway, and only the few points, relationships, or source images needed for recall. Use code-rendered text and shapes; image-generation tools are not part of this workflow. Choose card content by profile, preserve material conditions, and label selected list or image coverage. Keep full required coverage in the note.
+
+The note renderer creates a portable PNG and an editable SVG, embeds the PNG before the main text, and links the SVG. On overflow, shorten the synthesis or select fewer points; do not clip text or silently remove meaning. Inspect the rendered card before cleanup.
 
 ## Select visuals economically
 
@@ -151,6 +158,6 @@ Use `references/report-templates.md` for the final note shape. Keep test inputs,
    Re-read the rendered prose against the [writing rules](#write-clear-notes). The renderer preserves supplied wording; it does not assess understanding.
 2. Confirm that every `visual` content item has exactly one rendered image and every `catalog` item appears in the note.
 3. Run `scripts/job.py finalize --manifest <job.json> --evidence <bundle.json> --note <note.md>`. This verifies the note and local embeds before deleting anything.
-4. Preserve only the final note, its copied visuals, and the compact manifest written by `finalize`. Delete raw media, extracted audio, transcripts, OCR output, evidence bundles, candidate/rejected frames, contact sheets, previews, and unreferenced experiment files.
+4. Preserve the final note, both card formats, its copied source visuals, and the compact manifest written by `finalize`. Remove raw media, extracted audio, transcripts, OCR output, evidence bundles, candidate/rejected frames, contact sheets, previews, and unreferenced experiment files using the workspace's cleanup policy. Windows cleanup uses the Recycle Bin; if recycling fails, retain the files and report the limitation.
 5. Preserve shared ASR/OCR models and dependencies.
-6. Return the content profile, acquisition completeness, concise conclusion, note path, retained visual count, and cleanup status.
+6. Return the content profile, acquisition completeness, concise conclusion, note path, card path, retained visual count, and cleanup status. Show the card when it helps the user review the result.
